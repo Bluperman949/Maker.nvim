@@ -159,6 +159,9 @@ function M.setup(user_opts)
   if not user_opts.disable_default_scanners then
     M.scanners[1] = MAKEFILE_SCANNER
   end
+  for _,v in ipairs(user_opts.scanners or {}) do
+    M.scanners[#M.scanners+1] = v
+  end
 
   if M.scan() then return end
   command = commands[1]
