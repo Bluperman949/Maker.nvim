@@ -32,6 +32,10 @@ The `setup` table accepts the following values:
   default: `'tabnew | term'`\
   accepted: string
 
+- `make_after_select`: whether to run a command immediately after it is selected.\
+  default: `true`\
+  accepted: boolean
+
 - `keymap`: keymaps for Maker functions. Assigning `true` will explicitly use the default mappings. Specifying your own mappings will nullify ALL default mappings.\
   accepted: table, boolean
 

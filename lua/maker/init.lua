@@ -48,6 +48,7 @@ function M.select_build()
     if not choice then return end
     command = choice;
     command_index = 1;
+    if opts.make_after_select then M.make() end
   end)
 end
 
@@ -167,6 +168,9 @@ function M.setup(user_opts)
 
   if user_opts.keymap == true then opts.keymap = DEFAULT_KEYMAP
   else opts.keymap = user_opts.keymap or DEFAULT_KEYMAP end
+
+  if user_opts.make_after_select == nil then opts.make_after_select = true
+  else opts.make_after_select = user_opts.make_after_select == true end
 
   if user_opts.disable_default_scanners then
     M.scanners = {}
