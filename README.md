@@ -22,7 +22,7 @@ Minimal configuration is as follows:
 }
 ```
 
-<small>I haven't used any plugin managers aside from lazy.nvim. If you have examples for other plugin managers, please contribute them.</small>
+<sub>I haven't used any plugin managers aside from lazy.nvim. If you have examples for other plugin managers, please contribute them.</sub>
 
 ## Configuration
 
@@ -61,7 +61,7 @@ The `setup` table accepts the following values:
 
 ### Scanners
 
-<small>I haven't written this part yet. Annoy me about it.</small>
+<sub>I haven't written this part yet. Annoy me about it.</sub>
 
 ### Example Configuration
 
