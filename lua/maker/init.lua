@@ -55,6 +55,7 @@ end
     --== SCANNERS ==--
 
 function M.scan()
+  commands = {}
   for _,scanner in ipairs(M.scanners) do
     if not scanner.enabled() then goto continue end
     local results = scanner.run()
@@ -186,6 +187,7 @@ function M.setup(user_opts)
   vim.api.nvim_create_user_command('MakeCycle',  M.cycle_build, {})
   vim.api.nvim_create_user_command('MakeSelect', M.select_build, {})
   vim.api.nvim_create_user_command('MakeSilent', M.toggle_silent, {})
+  vim.api.nvim_create_user_command('MakeScan',   M.scan, {})
   vmap(opts.keymap.make,          M.make)
   vmap(opts.keymap.cycle_build,   M.cycle_build)
   vmap(opts.keymap.select_build,  M.select_build)
