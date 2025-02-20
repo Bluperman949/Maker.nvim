@@ -148,6 +148,14 @@ M.scanners = {
     return ret
   end),
 
+  M.create_scanner('python', function ()
+    -- TODO: separate scanners for BufReadPost
+    -- For now, just :MakeScan
+    if vim.bo.filetype == 'python' then
+      return {'python %'}
+    end
+  end)
+
 }
 
 local DEFAULT_WINCMD = 'tabnew | term'
