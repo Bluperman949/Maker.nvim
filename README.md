@@ -4,6 +4,8 @@ Maker is a simple plugin for NeoVim that finds and executes buildscripts. The co
 
 This plugin started as a VimL script that mapped `<A-r>` to `python %` in py files and `zig build run` in zig files. When I tried to apply it to Gradle, I found it hard to pick one universal "run command". I also found that tying the command to a filetype was limiting. So, here's my first neovim plugin.
 
+I'll be adding more default Scanners as time goes on. If you've written a Scanner and feel like it could be useful to others, please PR it!
+
 ## Installation
 
 Minimal configuration is as follows:
@@ -19,6 +21,8 @@ Minimal configuration is as follows:
   end
 }
 ```
+
+<small>I haven't used any plugin managers aside from lazy.nvim. If you have examples for other plugin managers, please contribute them.</small>
 
 ## Configuration
 
@@ -57,4 +61,36 @@ The `setup` table accepts the following values:
 
 ### Scanners
 
-(I haven't written this part yet. Annoy me about it!)
+<small>I haven't written this part yet. Annoy me about it.</small>
+
+### Example Configuration
+
+```lua
+{
+  'Bluperman949/Maker.nvim',
+  event = 'VeryLazy',
+  config = function ()
+    local maker = require'maker'
+    maker.setup{
+      -- open an external terminal window (tmux users, do your thing)
+      window_command = 'silent !kitty --hold --class=runner --',
+      -- use default keymaps
+      keymap = true,
+      disable_default_scanners = true,
+      scanners = {
+        -- This is just the default makefile scanner.
+        -- Normally you'd write your own here.
+        maker.create_scanner('makefile', function ()
+          local file = maker.find_file'makefile'
+          if not file then return nil end
+          local matches = maker.match_in_file(file, '^[%a_]+:%s*$')
+          if not matches then return nil end
+          return maker.filter(matches, function (item)
+            return 'make '..item:match'[%a_]+'
+          end)
+        end),
+      },
+    }
+  end,
+}
+```
