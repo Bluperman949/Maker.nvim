@@ -38,13 +38,14 @@ function M.cycle_build()
   command_index = command_index + 1
   if command_index > #commands then command_index = 1 end
   command = commands[command_index]
-  print([[Maker: selected ']]..command..[[']])
+  print("Maker: selected '"..command.."'")
 end
 
 function M.select_build()
   vim.ui.select(commands, {
     prompt = 'Select a build command',
   }, function (choice)
+    if not choice then return end
     command = choice;
     command_index = 1;
   end)
@@ -52,14 +53,14 @@ end
 
     --== SCANNERS ==--
 
-M.scanners = {}
-
 function M.scan()
   for _,scanner in ipairs(M.scanners) do
     if not scanner.enabled() then goto continue end
     local results = scanner.run()
     if not results then goto continue end
-    for _,v in ipairs(results) do commands[#commands+1] = v end
+    for _,v in ipairs(results) do
+      commands[#commands+1] = v
+    end
     ::continue::
   end
   if #commands == 0 then
@@ -88,13 +89,6 @@ function M.find_file(filename)
   return vim.fs.find({filename}, {upward = true})[1]
 end
 
-function M.find_file_and_cd(filename)
-  local found = M.find_file(filename)
-  if not found then return nil end
-  vim.api.nvim_set_current_dir(vim.fs.dirname(found))
-  return found
-end
-
 function M.match_in_file(filename, find_pattern)
   --https://neovim.io/doc/user/luaref.html#lua-patterns
   local file = io.open(filename, 'r')
@@ -121,20 +115,38 @@ function M.filter(items, func)
   return ret
 end
 
+function M.shell_command(cmd)
+  return vim.split(vim.fn.system(cmd), '\n', {trimempty=true})
+end
+
     --== DEFAULTS ==--
 
-local MAKEFILE_SCANNER = M.create_scanner(
-  'makefile',
-  function ()
-    local file = M.find_file_and_cd'makefile'
+M.scanners = {
+
+  M.create_scanner('makefile', function ()
+    local file = M.find_file'makefile'
     if not file then return nil end
     local matches = M.match_in_file(file, '^[%a_]+:%s*$')
     if not matches then return nil end
     return M.filter(matches, function (item)
       return 'make '..item:match'[%a_]+'
     end)
-  end
-)
+  end),
+
+  M.create_scanner('build.zig', function ()
+    local file = M.find_file'build.zig'
+    if not file then return nil end
+    print'compiling build.zig...'
+    local response = M.shell_command'zig build -l'
+    print(' ')
+    local ret = M.filter(response, function (item)
+      return 'zig build '..item:match'[%a_-]+'
+    end)
+    table.insert(ret, 1, 'zig build')
+    return ret
+  end),
+
+}
 
 local DEFAULT_WINCMD = 'tabnew | term'
 local DEFAULT_KEYMAP = {
@@ -156,8 +168,8 @@ function M.setup(user_opts)
   if user_opts.keymap == true then opts.keymap = DEFAULT_KEYMAP
   else opts.keymap = user_opts.keymap or DEFAULT_KEYMAP end
 
-  if not user_opts.disable_default_scanners then
-    M.scanners[1] = MAKEFILE_SCANNER
+  if user_opts.disable_default_scanners then
+    M.scanners = {}
   end
   for _,v in ipairs(user_opts.scanners or {}) do
     M.scanners[#M.scanners+1] = v
