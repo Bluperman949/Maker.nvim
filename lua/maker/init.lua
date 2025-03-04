@@ -167,7 +167,7 @@ local DEFAULT_KEYMAP = {
 }
 
 local vmap = function (lhs, rhs)
-  if type(lhs) == 'string' then vim.keymap.set({'n', 'x'}, lhs, rhs) end
+  if type(lhs) == 'string' then vim.keymap.set({'n'}, lhs, rhs) end
 end
 
     --== INITIALIZATION ==--
