@@ -144,7 +144,7 @@ M.scanners = {
     local ret = M.filter(response, function (item)
       return 'zig build '..item:match'[%a_-]+'
     end)
-    table.insert(ret, 1, 'zig build')
+    table.insert(ret, #ret+1, 'zig build')
     return ret
   end),
 
