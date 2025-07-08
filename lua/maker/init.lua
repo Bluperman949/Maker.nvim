@@ -188,6 +188,8 @@ function M.setup(user_opts)
     M.scanners[#M.scanners+1] = v
   end
 
+  vim.api.nvim_create_user_command('MakeScan',   M.scan, {})
+
   if M.scan() then return end
   command = commands[1]
 
@@ -195,7 +197,6 @@ function M.setup(user_opts)
   vim.api.nvim_create_user_command('MakeCycle',  M.cycle_build, {})
   vim.api.nvim_create_user_command('MakeSelect', M.select_build, {})
   vim.api.nvim_create_user_command('MakeSilent', M.toggle_silent, {})
-  vim.api.nvim_create_user_command('MakeScan',   M.scan, {})
   vmap(opts.keymap.make,          M.make)
   vmap(opts.keymap.cycle_build,   M.cycle_build)
   vmap(opts.keymap.select_build,  M.select_build)
