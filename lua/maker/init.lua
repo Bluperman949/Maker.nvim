@@ -154,7 +154,21 @@ M.scanners = {
     if vim.bo.filetype == 'python' then
       return {'python %'}
     end
-  end)
+  end),
+
+  M.create_scanner('gradle', function ()
+    local file = M.find_file'gradlew'
+    if not file then return nil end
+    print'getting Gradle tasks...'
+    local response = M.shell_command'./gradlew tasks'
+    print(' ')
+    local ret = M.filter(response, function (item)
+      local match = item:match('^%l%a+ -')
+      if not match then return nil end
+      return './gradlew '..match:sub(0, -1)
+    end)
+    return ret
+  end),
 
 }
 
