@@ -2,7 +2,6 @@
 -- maker.nvim
 -- Author: Christian Doolittle
 -- A small plugin that finds and executes buildscripts.
--- Emphasis on fallbacks maker.nvim should always find your script.
 --
 
 local M = {}
