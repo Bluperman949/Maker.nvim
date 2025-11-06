@@ -81,22 +81,20 @@ The `setup` table accepts the following values:
       window_command = 'silent !kitty --hold --class=runner --',
       keymap = true,
       disable_default_scanners = true,
-      scanners = {
-        -- This is just the default makefile scanner for demonstration purposes.
-        -- Normally you'd write your own here.
-        local my_makefile_scanner = maker.create_scanner('makefile', function ()
-          local file_path = util.find_file{'makefile', 'Makefile', 'MAKEFILE'}
-          if not file_path then return {} end
-          local lines = util.read_file(file_path)
-          local matches = util.tbl_map_drop_nil(function (line)
-            local _line = line:match('^[%a_]+:%s*$')
-            return _line and 'make ' .. matched_line:match('[%a_]+')
-          end, lines)
-          return matches
-        end)
-        maker.register_scanner(my_makefile_scanner)
-      },
     }
+    -- This is just the default makefile scanner for demonstration purposes.
+    -- Normally you'd write your own here.
+    local my_makefile_scanner = maker.create_scanner('makefile', function ()
+        local file_path = util.find_file{'makefile', 'Makefile', 'MAKEFILE'}
+        if not file_path then return {} end
+        local lines = util.read_file(file_path)
+        local matches = util.tbl_map_drop_nil(function (line)
+          local _line = line:match('^[%a_]+:%s*$')
+          return _line and 'make ' .. matched_line:match('[%a_]+')
+          end, lines)
+        return matches
+        end)
+    maker.register_scanner(my_makefile_scanner)
   end,
 }
 ```
