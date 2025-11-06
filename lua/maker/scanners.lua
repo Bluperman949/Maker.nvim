@@ -34,6 +34,7 @@ end
 M.init_default_scanners = function ()
   M.register(require'maker.default_scanners.makefile')
   M.register(require'maker.default_scanners.zig')
+  M.register(require'maker.default_scanners.gradle')
 end
 
 M.run_all = function ()
