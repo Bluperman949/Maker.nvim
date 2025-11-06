@@ -39,23 +39,23 @@ The `setup` table accepts the following values:
 - `keymap`: keymaps for Maker functions. Assigning `true` will explicitly use the default mappings. Specifying your own mappings will nullify ALL default mappings.\
   accepted: table, boolean
 
-  - `make`: run the selected command.\
-    default: `',,'`\
+  - `scan`: run all Scanners to check for new buildscripts.\
+    default: `',r'`\
     accepted: string
 
-  - `cycle_build`: select the next command in the list of available commands.\
-    default: `',n'`\
+  - `make`: run the selected command.\
+    default: `',,'`\
     accepted: string
 
   - `select_build`: select your desired build from the list of available commands. Uses `vim.ui.select`, affected by decorator plugins.\
     default: `',.'`\
     accepted: string
 
-  - `toggle_silent`: toggle Silent Mode. `window_command` will not be executed. Meant for UI applications where the terminal output is unnecessary.\
+  - `toggle_silent`: toggle Silent Mode. `window_command` will not be executed. Meant for GUI applications where the terminal output is unnecessary.\
     default: `',s'`\
     accepted: string
 
-- `disable_default_scanners`: don't add any buildscript Scanners to the scanner list.\
+- `disable_default_scanners`: don't add any Scanners to the Scanner list.\
   default: `false`\
   accepted: boolean
 
@@ -75,24 +75,26 @@ The `setup` table accepts the following values:
   event = 'VeryLazy',
   config = function ()
     local maker = require'maker'
+    local util = require'maker.util'
     maker.setup{
-      -- open an external terminal window (tmux users, do your thing)
+      -- for example, Maker can open an external terminal window
       window_command = 'silent !kitty --hold --class=runner --',
-      -- use default keymaps
       keymap = true,
       disable_default_scanners = true,
       scanners = {
-        -- This is just the default makefile scanner.
+        -- This is just the default makefile scanner for demonstration purposes.
         -- Normally you'd write your own here.
-        maker.create_scanner('makefile', function ()
-          local file = maker.find_file'makefile'
-          if not file then return nil end
-          local matches = maker.match_in_file(file, '^[%a_]+:%s*$')
-          if not matches then return nil end
-          return maker.filter(matches, function (item)
-            return 'make '..item:match'[%a_]+'
-          end)
-        end),
+        local my_makefile_scanner = maker.create_scanner('makefile', function ()
+          local file_path = util.find_file{'makefile', 'Makefile', 'MAKEFILE'}
+          if not file_path then return {} end
+          local lines = util.read_file(file_path)
+          local matches = util.tbl_map_drop_nil(function (line)
+            local _line = line:match('^[%a_]+:%s*$')
+            return _line and 'make ' .. matched_line:match('[%a_]+')
+          end, lines)
+          return matches
+        end)
+        maker.register_scanner(my_makefile_scanner)
       },
     }
   end,
