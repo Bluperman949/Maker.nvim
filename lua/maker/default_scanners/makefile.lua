@@ -5,8 +5,8 @@ local util = require'maker.util'
 ---@return string?
 local match_line = function (line)
   ---@type string?
-  local matched_line = line:match('^[%a_]+:%s*$')
-  return matched_line and 'make ' .. matched_line:match('[%a_]+')
+  local matched_line = line:match('^[%a_]+:')
+  return matched_line and 'make ' .. matched_line:sub(1, -2)
 end
 
 return scanners.create('makefile', function ()

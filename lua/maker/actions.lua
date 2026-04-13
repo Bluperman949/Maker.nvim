@@ -19,7 +19,7 @@ end
 
 M.select_build = function ()
   vim.ui.select(state.known_commands, {
-    prompt = 'Select a build command',
+    prompt = 'Select a build command: ',
   }, function (_, i)
     if i == nil then return end
     state.command_outdated = true
