@@ -7,6 +7,15 @@ M.find_file = function (names)
   if #found > 0 then return found[1] else return nil end
 end
 
+---@param pattern string
+---@return string?
+M.match_file = function (pattern)
+  local match_not_nil = function(str) return str:match(pattern) ~= nil end
+  local found = vim.fs.find(match_not_nil, {upward = true, type = 'file'})
+  if #found > 0 then return found[1] else return nil end
+end
+
+
 ---@param filename string
 ---@return string[]
 M.read_file = function (filename)
