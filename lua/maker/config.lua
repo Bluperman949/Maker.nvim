@@ -8,15 +8,15 @@ M.current_config = nil
 
 ---@type maker.Config
 local DEFAULT_CONFIG = {
-  window_command = 'term',
+  window_command = 'tabnew | term',
   make_after_select = true,
-  disable_default_scanners = false,
   keymap = {
     scan          = ',r',
     make          = ',,',
     select_build  = ',.',
     toggle_silent = ',s',
   },
+  disable_default_scanners = false,
 }
 
 M.init_if_needed = function ()
