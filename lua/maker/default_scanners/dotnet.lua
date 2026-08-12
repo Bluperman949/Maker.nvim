@@ -8,19 +8,18 @@ return scanners.create('dotnet', function ()
     'dotnet clean',
   }
 
-  local file = util.match_file('.+[.]csproj')
+  local csproj = util.match_file('.+[.]csproj')
 
   -- If in project dir, we can try to run this project directly.
-  if file then
+  if csproj then
     table.insert(base_commands, 1, 'dotnet run')
     table.insert(base_commands, 2, 'dotnet test')
     return base_commands
   end
 
   -- otherwise, search subdirs for executable projects
-  file = util.match_file('.+[.]sln')
-
-  local projects = vim.split(vim.fn.glob('*/*.csproj'), '%s')
+  local projects = vim.split(vim.fn.glob('*/*.csproj'), '%s', { trimempty = true })
+  if #projects == 0 then return {} end -- don't pollute Maker with useless commands
   local proj_commands = util.tbl_map_drop_nil(function (proj_path)
     local proj_file = io.open(proj_path, 'r')
     if not proj_file then return nil end
