@@ -6,6 +6,6 @@ return scanners.create('zig', function ()
   if not file then return nil end
   local response = util.shell_command('zig build -l')
   return vim.tbl_map(function (line)
-    return 'zig build ' .. line:match('[%a_-]+')
+    return 'zig build ' .. line:match('%S+')
   end, response)
 end)

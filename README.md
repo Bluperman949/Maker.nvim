@@ -51,7 +51,7 @@ The `setup` table accepts the following values:
     default: `',r'`\
     accepted: string
 
-  - `make`: run the selected build command.\
+  - `make`: run the selected build command. If no command is selected, `select_build` is executed first.\
     default: `',,'`\
     accepted: string
 
@@ -104,7 +104,7 @@ local my_scanner_for_zig = scanners.create('zig', function ()
   -- query your build system for commands, parse the file yourself, etc.
   local response = util.shell_command('zig build -l')
   return vim.tbl_map(function (line)
-    return 'zig build ' .. line:match('[%a_-]+')
+    return 'zig build ' .. line:match('%S+')
   end, response)
 end)
 -- Registration is simple.

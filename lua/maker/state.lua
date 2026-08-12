@@ -1,11 +1,15 @@
 local M = {}
 
----@type maker.CommandList
-M.known_commands = {}
-
 M.silent = false
-M.selected_index = 1
+
+---@type table<string, string[]>
+M.scan_results = {}
+
+---@type maker.Selection
+M.selection = { source = '', index = 0 }
+
 M.command = ''
 M.command_outdated = true
+M.selection_outdated = true
 
 return M

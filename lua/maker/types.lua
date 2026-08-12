@@ -21,6 +21,10 @@
 ---@field enabled maker.ScannerEnabledFunction
 ---@field run maker.ScannerFunction
 
+---@class maker.Selection
+---@field source string
+---@field index integer
+
 ---@alias maker.ScannerEnabledFunction function<boolean>
 ---@alias maker.ScannerFunction function<maker.CommandList>
 ---@alias maker.CommandList string[]

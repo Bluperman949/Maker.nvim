@@ -37,8 +37,8 @@ end
 ---@param cmd string
 ---@return string[]
 M.shell_command = function (cmd)
-  local content = vim.fn.system(cmd)
-  return vim.split(content, '\n', {trimempty=true})
+  local res = vim.system(vim.split(cmd, ' ', { trimempty = true }), { text = true }):wait()
+  return vim.split(res.stdout, '\n', { trimempty = true })
 end
 
 return M

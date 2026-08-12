@@ -3,14 +3,13 @@ local state = require'maker.state'
 local M = {}
 
 ---@type maker.Scanner[]
-M.scanners = {}
+local registered_scanners = {}
 
 ---@param name string
 ---@param run maker.ScannerFunction
 ---@param enabled ?maker.ScannerEnabledFunction|boolean
 ---@return maker.Scanner
 M.create = function (name, run, enabled)
-  ---@type maker.ScannerEnabledFunction
   local _enabled
   if type(enabled) == 'boolean' then
     _enabled = function () return enabled end
@@ -26,26 +25,39 @@ M.create = function (name, run, enabled)
 end
 
 ---@param scanner maker.Scanner
----@return nil
 M.register = function (scanner)
-  M.scanners[scanner.name] = scanner
+  registered_scanners[scanner.name] = scanner
 end
 
-M.init_default_scanners = function ()
+M.register_default_scanners = function ()
   M.register(require'maker.default_scanners.makefile')
   M.register(require'maker.default_scanners.zig')
   M.register(require'maker.default_scanners.gradle')
   M.register(require'maker.default_scanners.dotnet')
 end
 
-M.run_all = function ()
-  local results = {}
-  for _,scanner in pairs(M.scanners) do
-    if scanner.enabled() then
-      results[scanner.name] = scanner.run()
-    end
+---@param scanner maker.Scanner|string
+local run = function (scanner)
+  if type(scanner) == "string" then
+    scanner = registered_scanners[scanner]
   end
-  state.known_commands = vim.iter(vim.tbl_values(results)):flatten():totable()
+  state.scan_results[scanner.name] = {}
+  if scanner.enabled() then
+    state.scan_results[scanner.name] = scanner.run()
+  end
+end
+
+M.run_all = function ()
+  for _, scanner in pairs(registered_scanners) do
+    run(scanner)
+  end
+end
+
+---@param name string
+M.run_single = function (name)
+  local scanner = registered_scanners[name]
+  if scanner == nil then return end
+  run(scanner)
 end
 
 return M

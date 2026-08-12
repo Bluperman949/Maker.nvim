@@ -19,7 +19,7 @@ M.setup = function (usr_config)
     vim.keymap.set('n', keys, M[action_name], {})
   end
   if not config.current_config.disable_default_scanners then
-    scanners.init_default_scanners()
+    scanners.register_default_scanners()
   end
   M.scan()
 end
