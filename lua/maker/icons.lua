@@ -16,7 +16,7 @@ M.set_icon = function (name, icon, cterm_color)
 end
 
 ---@param name string
----@return string
+---@return string|nil
 M.get_icon = function (name)
   if not icons[name] and devicons then
     local devicon, cterm_color = devicons.get_icon_cterm_color(name)
@@ -24,7 +24,7 @@ M.get_icon = function (name)
       icons[name] = '\x1B[;38;5;' .. cterm_color .. 'm' .. devicon .. '\x1B[0m'
     end
   end
-  return icons[name] or '\x1B[32m>_\x1B[0m'
+  return icons[name]
 end
 
 return M

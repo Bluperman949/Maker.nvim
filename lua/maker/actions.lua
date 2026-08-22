@@ -34,7 +34,9 @@ M.select_build = function (make_after_select)
 
   vim.ui.select(options, {
     prompt = 'Select a build command: ',
-    format_item = function (item) return item.formatted end,
+    format_item = function (item)
+      return item.formatted or item.command
+    end,
   }, function (item, _)
     if item == nil then return end
     state.command_raw = item.command
