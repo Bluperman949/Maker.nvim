@@ -1,18 +1,18 @@
 local state = require'maker.state'
 local config = require'maker.config'
+local icons = require'maker.icons'
 
 local M = {}
 
 M.make = function ()
   if state.selection_outdated then M.select_build(true)
   elseif state.command_outdated then
-    local prefix = state.silent and 'silent !' or config.current_config.window_command..' '
     if next(state.scan_results) == nil then
       vim.print('No build commands!')
       return
     end
-    local command = state.scan_results[state.selection.source][state.selection.index]
-    state.command = prefix .. command
+    local prefix = state.silent and 'silent !' or config.current_config.window_command .. ' '
+    state.command = prefix .. state.command_raw
     state.command_outdated = false
   end
   vim.cmd(state.command)
@@ -20,21 +20,24 @@ end
 
 ---@param make_after_select boolean?
 M.select_build = function (make_after_select)
-  ---@type maker.Selection[], string[]
-  local options, commands = {}, {}
+  local options = {}
 
   for source,results in pairs(state.scan_results) do
-    for index,command in ipairs(results) do
-      options[#options+1] = { source = source, index = index }
-      commands[#commands+1] = '[' .. source .. ']  ' .. command
+    local icon = icons.get_icon(source)
+    for _,command in ipairs(results) do
+      options[#options+1] = {
+        command = command,
+        formatted = icon .. ' ' .. command,
+      }
     end
   end
 
-  vim.ui.select(commands, {
+  vim.ui.select(options, {
     prompt = 'Select a build command: ',
-  }, function (_, i)
-    if i == nil then return end
-    state.selection = options[i]
+    format_item = function (item) return item.formatted end,
+  }, function (item, _)
+    if item == nil then return end
+    state.command_raw = item.command
     state.selection_outdated = false
     state.command_outdated = true
     if make_after_select or config.current_config.make_after_select then

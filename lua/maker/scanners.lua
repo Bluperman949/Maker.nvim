@@ -33,7 +33,7 @@ M.register_default_scanners = function ()
   M.register(require'maker.default_scanners.makefile')
   M.register(require'maker.default_scanners.zig')
   M.register(require'maker.default_scanners.gradle')
-  M.register(require'maker.default_scanners.dotnet')
+  M.register(require'maker.default_scanners.csproj')
 end
 
 ---@param scanner maker.Scanner|string

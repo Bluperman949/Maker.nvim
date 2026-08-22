@@ -6,7 +6,7 @@ concept is similar to [code_runner.nvim](https://github.com/CRAG666/code_runner.
 This plugin started as a VimL script that added a keybind for running `python
 %` in py files and `zig build run` in zig files. When I tried to apply it to
 Gradle, I found it hard to pick one universal "run command". I also found that
-tying the command to a filetype was limiting. So, here's my first neovim
+tying the command to a filetype was limiting. So, here's my first NeoVim
 plugin.
 
 Maker uses customizable units called [Scanners](#scanners) to find all build
@@ -15,8 +15,9 @@ list of shell commands for you to run with a single keybind - a "run button".
 The end result is basically the same as other code-runner plugins, but it's
 meant to handle situations where one "run button" isn't enough.
 
-## Installation
+TL;DR: It's the dollar-store version of IntelliJ Run Configurations.
 
+## Installation
 Minimal configuration is as follows:
 
 ### lazy.nvim
@@ -26,11 +27,20 @@ Minimal configuration is as follows:
   event = 'VeryLazy',
   config = function ()
     require'maker'.setup{}
-  end
+  end,
 }
 ```
 
-<sub>I haven't used any plugin managers aside from lazy.nvim. If you have examples for other plugin managers, please contribute them.</sub>
+### vim.pack
+```lua
+vim.pack.add{
+  name = 'maker',
+  src = 'https://github.com/Bluperman949/Maker.nvim',
+}
+require'maker'.setup{}
+```
+
+<sub>I haven't used other plugin managers. If you have examples for other plugin managers, please contribute them.</sub>
 
 ## Configuration
 
@@ -147,4 +157,16 @@ maker.register_scanner(require'maker.default_scanners.name_of_scanner')
     -- "Scanners" section should go here.
   end,
 }
+```
+
+### Icons
+
+Currently, the only compatibility is with [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons).
+If installed, icons will appear next to build commands if their Scanner's name
+has an associated icon.
+
+You can also define your own icons using a cterm color:
+```lua
+local icons = require'maker.icons'
+icons.set_icon('myscannername', ':)', 123)
 ```
