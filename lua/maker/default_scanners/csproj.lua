@@ -1,7 +1,7 @@
 local scanners = require'maker.scanners'
 local util = require'maker.util'
 
-return scanners.create('dotnet', function ()
+return scanners.create('csproj', function ()
   local base_commands = {
     'dotnet build',
     'dotnet format',
@@ -31,9 +31,9 @@ return scanners.create('dotnet', function ()
 
     -- look for keywords suggesting this project is runnable or for testing
     if proj_xml:match('Exe') then
-      command = 'dotnet run --project '..proj_name
+      command = 'dotnet run --project ' .. proj_name
     elseif proj_xml:match('Test') then
-      command = 'dotnet test '..proj_name
+      command = 'dotnet test ' .. proj_name
     end
 
     proj_file:close()
